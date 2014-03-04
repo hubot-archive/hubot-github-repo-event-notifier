@@ -2,7 +2,7 @@
 
 Notifies about any GitHub repo event available via webhook.
 
-See [`src/hubot-github-repo-webhook-notifier.coffee`](src/hubot-github-repo-webhook-notifier.coffee) for full documentation.
+See [`src/github-repo-webhook-notifier.coffee`](src/github-repo-webhook-notifier.coffee) for full documentation.
 
 ## Installation
 

@@ -43,23 +43,24 @@ module.exports = (robot) ->
 
 announcePullRequest = (data, cb) ->
   if data.action == 'opened'
-    mentioned = data.pull_request.body.match(/(^|\s)(@[\w\-\/]+)/g)
+    mentioned_line = ''
 
-    if mentioned
-      unique = (array) ->
-        output = {}
-        output[array[key]] = array[key] for key in [0...array.length]
-        value for key, value of output
+    if data.pull_request.body?
+      mentioned = data.pull_request.body.match(/(^|\s)(@[\w\-\/]+)/g)
 
-      mentioned = mentioned.filter (nick) ->
-        slashes = nick.match(/\//g)
-        slashes is null or slashes.length < 2
+      if mentioned
+        unique = (array) ->
+          output = {}
+          output[array[key]] = array[key] for key in [0...array.length]
+          value for key, value of output
 
-      mentioned = mentioned.map (nick) -> nick.trim()
-      mentioned = unique mentioned
+        mentioned = mentioned.filter (nick) ->
+          slashes = nick.match(/\//g)
+          slashes is null or slashes.length < 2
 
-      mentioned_line = "\nMentioned: #{mentioned.join(", ")}"
-    else
-      mentioned_line = ''
+        mentioned = mentioned.map (nick) -> nick.trim()
+        mentioned = unique mentioned
+
+        mentioned_line = "\nMentioned: #{mentioned.join(", ")}"
 
     cb "New pull request \"#{data.pull_request.title}\" by #{data.pull_request.user.login}: #{data.pull_request.html_url}#{mentioned_line}"

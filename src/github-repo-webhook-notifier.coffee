@@ -6,18 +6,24 @@
 #     (See: http://developer.github.com/webhooks/#events)
 #
 #   You will have to do the following:
-#   1. Get an API token: curl -u 'username' -d '{"scopes":["repo"],"note":"Hooks management"}' \
-#                         https://api.github.com/authorizations
-#   2. Add <HUBOT_URL>:<PORT>/hubot/gh-repo-events?room=<room> url hook via API:
-#      curl -H "Authorization: token <your api token>" \
-#      -d '{"name":"web","active":true,"events":["pull_request"],"config":{"url":"<this script url>","content_type":"json"}}' \
-#      https://api.github.com/repos/<your user>/<your repo>/hooks
+#   1. Create a new webhook for your `myuser/myrepo` repository at:
+#      https://github.com/myuser/myrepo/settings/hooks/new
+#
+#   2. Select the individual events to minimize the load on your Hubot.
+#
+#   3. Add the url: <HUBOT_URL>:<PORT>/hubot/gh-repo-events?room=<room>
+#      (Don't forget to urlencode the room name, especially for IRC. Hint: # = %23)
 #
 # Commands:
 #   None
 #
 # URLS:
 #   POST /hubot/gh-repo-events?room=<room>
+#
+# Notes:
+#   Currently tested with the following event types in HUBOT_GITHUB_EVENT_NOTIFIER_TYPES:
+#     - issue
+#     - pull_request
 #
 # Authors:
 #   spajus

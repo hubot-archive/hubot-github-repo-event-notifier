@@ -1,5 +1,5 @@
 # Description:
-#   Notifies about any GitHub repo event available via webhook
+#   Notifies about any available GitHub repo event via webhook
 #
 # Configuration:
 #   HUBOT_GITHUB_EVENT_NOTIFIER_ROOM  - The default room to which message should go (optional)

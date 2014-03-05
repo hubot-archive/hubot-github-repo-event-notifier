@@ -1,6 +1,6 @@
 {
-  "name": "hubot-github-repo-webhook-notifier",
-  "description": "Notifies about any GitHub repo event available via webhook",
+  "name": "hubot-github-repo-event-notifier",
+  "description": "Notifies about any available GitHub repo event via webhook",
   "version": "1.1.0",
   "author": "patcon@gittip",
   "contributors": [
@@ -18,10 +18,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/patcon/hubot-github-repo-webhook-notifier.git"
+    "url": "git://github.com/patcon/hubot-github-repo-event-notifier.git"
   },
   "bugs": {
-    "url": "https://github.com/patcon/hubot-github-repo-webhook-notifier/issues"
+    "url": "https://github.com/patcon/hubot-github-repo-event-notifier/issues"
   },
   "dependencies": {
     "coffee-script": "~1.6",

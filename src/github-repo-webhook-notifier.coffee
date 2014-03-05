@@ -37,35 +37,37 @@ module.exports = (robot) ->
     room = query.room
 
     try
-      announceRepoEvent data, (what) ->
-        robot.messageRoom room, what
+      for event_type in event_types
+        if data[event_type]?
+          announceRepoEvent data, event_type, (what) ->
+            robot.messageRoom room, what
     catch error
       robot.messageRoom room, "Whoa, I got an error: #{error}"
       console.log "github repo event notifier error: #{error}. Request: #{req.body}"
 
     res.end ""
 
-announceRepoEvent = (data, cb) ->
+announceRepoEvent = (data, event_type, cb) ->
   if data.action == 'opened'
     mentioned_line = ''
 
-    for type in event_types
-      if data[type]? and data[type].body?
-        mentioned = data[type].body.match(/(^|\s)(@[\w\-\/]+)/g)
+    # body can be null in certain circumstances
+    if data[event_type].body?
+      mentioned = data[event_type].body.match(/(^|\s)(@[\w\-\/]+)/g)
 
-        if mentioned
-          unique = (array) ->
-            output = {}
-            output[array[key]] = array[key] for key in [0...array.length]
-            value for key, value of output
+      if mentioned
+        unique = (array) ->
+          output = {}
+          output[array[key]] = array[key] for key in [0...array.length]
+          value for key, value of output
 
-          mentioned = mentioned.filter (nick) ->
-            slashes = nick.match(/\//g)
-            slashes is null or slashes.length < 2
+        mentioned = mentioned.filter (nick) ->
+          slashes = nick.match(/\//g)
+          slashes is null or slashes.length < 2
 
-          mentioned = mentioned.map (nick) -> nick.trim()
-          mentioned = unique mentioned
+        mentioned = mentioned.map (nick) -> nick.trim()
+        mentioned = unique mentioned
 
-          mentioned_line = "\nMentioned: #{mentioned.join(", ")}"
+        mentioned_line = "\nMentioned: #{mentioned.join(", ")}"
 
-      cb "New #{type} \"#{data[type].title}\" by #{data[type].user.login}: #{data[type].html_url}#{mentioned_line}"
+    cb "New #{event_type} \"#{data[event_type].title}\" by #{data[event_type].user.login}: #{data[event_type].html_url}#{mentioned_line}"

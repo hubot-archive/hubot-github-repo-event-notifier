@@ -2,50 +2,64 @@
 #   Notifies about any GitHub repo event available via webhook
 #
 # Configuration:
+#   HUBOT_GITHUB_EVENT_NOTIFIER_TYPES - Comma-separated list of event types to notify on
+#     (See: http://developer.github.com/webhooks/#events)
+#
 #   You will have to do the following:
-#   1. Get an API token: curl -u 'username' -d '{"scopes":["repo"],"note":"Hooks management"}' \
-#                         https://api.github.com/authorizations
-#   2. Add <HUBOT_URL>:<PORT>/hubot/gh-pull-requests?room=<room>[&type=<type>] url hook via API:
-#      curl -H "Authorization: token <your api token>" \
-#      -d '{"name":"web","active":true,"events":["pull_request"],"config":{"url":"<this script url>","content_type":"json"}}' \
-#      https://api.github.com/repos/<your user>/<your repo>/hooks
+#   1. Create a new webhook for your `myuser/myrepo` repository at:
+#      https://github.com/myuser/myrepo/settings/hooks/new
+#
+#   2. Select the individual events to minimize the load on your Hubot.
+#
+#   3. Add the url: <HUBOT_URL>:<PORT>/hubot/gh-repo-events?room=<room>
+#      (Don't forget to urlencode the room name, especially for IRC. Hint: # = %23)
 #
 # Commands:
 #   None
 #
 # URLS:
-#   POST /hubot/gh-pull-requests?room=<room>[&type=<type]
+#   POST /hubot/gh-repo-events?room=<room>
+#
+# Notes:
+#   Currently tested with the following event types in HUBOT_GITHUB_EVENT_NOTIFIER_TYPES:
+#     - issue
+#     - pull_request
 #
 # Authors:
 #   spajus
 #   patcon
+#   parkr
 
 url = require('url')
 querystring = require('querystring')
 
+event_types = process.env.HUBOT_GITHUB_EVENT_NOTIFIER_TYPES.split(',')
+
 module.exports = (robot) ->
-  robot.router.post "/hubot/gh-pull-requests", (req, res) ->
+  robot.router.post "/hubot/gh-repo-events", (req, res) ->
     query = querystring.parse(url.parse(req.url).query)
 
     data = req.body
     room = query.room
 
     try
-      announcePullRequest data, (what) ->
-        robot.messageRoom room, what
+      for event_type in event_types
+        if data[event_type]?
+          announceRepoEvent data, event_type, (what) ->
+            robot.messageRoom room, what
     catch error
       robot.messageRoom room, "Whoa, I got an error: #{error}"
-      console.log "github pull request notifier error: #{error}. Request: #{req.body}"
+      console.log "github repo event notifier error: #{error}. Request: #{req.body}"
 
     res.end ""
 
-
-announcePullRequest = (data, cb) ->
+announceRepoEvent = (data, event_type, cb) ->
   if data.action == 'opened'
     mentioned_line = ''
 
-    if data.pull_request.body?
-      mentioned = data.pull_request.body.match(/(^|\s)(@[\w\-\/]+)/g)
+    # body can be null in certain circumstances
+    if data[event_type].body?
+      mentioned = data[event_type].body.match(/(^|\s)(@[\w\-\/]+)/g)
 
       if mentioned
         unique = (array) ->
@@ -62,4 +76,4 @@ announcePullRequest = (data, cb) ->
 
         mentioned_line = "\nMentioned: #{mentioned.join(", ")}"
 
-    cb "New pull request \"#{data.pull_request.title}\" by #{data.pull_request.user.login}: #{data.pull_request.html_url}#{mentioned_line}"
+    cb "New #{event_type.replace('_', ' ')} \"#{data[event_type].title}\" by #{data[event_type].user.login}: #{data[event_type].html_url}#{mentioned_line}"

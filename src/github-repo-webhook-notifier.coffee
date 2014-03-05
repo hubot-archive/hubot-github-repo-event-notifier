@@ -2,6 +2,7 @@
 #   Notifies about any GitHub repo event available via webhook
 #
 # Configuration:
+#   HUBOT_GITHUB_EVENT_NOTIFIER_ROOM  - The default room to which message should go (optional)
 #   HUBOT_GITHUB_EVENT_NOTIFIER_TYPES - Comma-separated list of event types to notify on
 #     (See: http://developer.github.com/webhooks/#events)
 #
@@ -11,7 +12,7 @@
 #
 #   2. Select the individual events to minimize the load on your Hubot.
 #
-#   3. Add the url: <HUBOT_URL>:<PORT>/hubot/gh-repo-events?room=<room>
+#   3. Add the url: <HUBOT_URL>:<PORT>/hubot/gh-repo-events[?room=<room>]
 #      (Don't forget to urlencode the room name, especially for IRC. Hint: # = %23)
 #
 # Commands:
@@ -40,7 +41,7 @@ module.exports = (robot) ->
     query = querystring.parse(url.parse(req.url).query)
 
     data = req.body
-    room = query.room
+    room = query.room || process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
 
     try
       for event_type in event_types

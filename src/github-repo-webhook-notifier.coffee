@@ -70,4 +70,4 @@ announceRepoEvent = (data, event_type, cb) ->
 
         mentioned_line = "\nMentioned: #{mentioned.join(", ")}"
 
-    cb "New #{event_type} \"#{data[event_type].title}\" by #{data[event_type].user.login}: #{data[event_type].html_url}#{mentioned_line}"
+    cb "New #{event_type.replace('_', ' ')} \"#{data[event_type].title}\" by #{data[event_type].user.login}: #{data[event_type].html_url}#{mentioned_line}"

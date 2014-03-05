@@ -50,7 +50,7 @@ announceRepoEvent = (data, cb) ->
     mentioned_line = ''
 
     for type in event_types
-      if data[type].body?
+      if data[type]? and data[type].body?
         mentioned = data[type].body.match(/(^|\s)(@[\w\-\/]+)/g)
 
         if mentioned

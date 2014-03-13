@@ -47,14 +47,15 @@ module.exports = (robot) ->
 
     data = req.body
     room = query.room || process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
-    console.log req
     eventType = req.headers["x-github-event"]
-    console.log "eventType=", eventType
+    console.log "Processing event type #{eventType}..."
 
     try
       if eventType in eventTypes
         announceRepoEvent data, eventType, (what) ->
           robot.messageRoom room, what
+      else
+        console.log "Ignoring #{eventType} event as it's not allowed."
     catch error
       robot.messageRoom room, "Whoa, I got an error: #{error}"
       console.log "github repo event notifier error: #{error}. Request: #{req.body}"

@@ -24,3 +24,21 @@ Add **hubot-github-repo-event-notifier** to your `external-scripts.json`:
 ```
 
 Run `npm install`
+
+## Development Testing
+
+Ideally, you'd write tests and put them in our `test/` directory.
+
+If you just want to mess around with some things, we've bundled a REPL for
+you which has some fixture data and exposes the core functionality of the
+processing of events. To boot up the reply, launch `script/console`.
+
+* Sample payloads are available via the variable `eventPayloads`. It
+  contains a key for each event type, e.g. `pull_request` or `page_build`.
+* Each processing function is available via `actions`. This object contains
+  a key for each event type, e.g. `pull_request` or `page_build`. It takes
+  the payload object and the callback function as its parameters, in that
+  order.
+* There is a special helper function called `printer` which just throws
+  whatever it takes into `console.log`. I guess you could just use
+  `console.log` itself but why the heck not?

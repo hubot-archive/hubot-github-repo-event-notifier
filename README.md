@@ -39,6 +39,3 @@ processing of events. To boot up the reply, launch `script/console`.
   a key for each event type, e.g. `pull_request` or `page_build`. It takes
   the payload object and the callback function as its parameters, in that
   order.
-* There is a special helper function called `printer` which just throws
-  whatever it takes into `console.log`. I guess you could just use
-  `console.log` itself but why the heck not?

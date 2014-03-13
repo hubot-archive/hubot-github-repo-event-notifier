@@ -1,6 +1,5 @@
 # Description:
-#   Notifies about any available GitHub repo event via webhook
-#
+#   Notifies about any available GitHub repo event via webhook #
 # Configuration:
 #   HUBOT_GITHUB_EVENT_NOTIFIER_ROOM  - The default room to which message should go (optional)
 #   HUBOT_GITHUB_EVENT_NOTIFIER_TYPES - Comma-separated list of event types to notify on
@@ -48,7 +47,9 @@ module.exports = (robot) ->
 
     data = req.body
     room = query.room || process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
-    eventType = req.getHeader("X-GitHub-Event")
+    console.log req
+    eventType = req.headers["x-github-event"]
+    console.log "eventType=", eventType
 
     try
       if eventType in eventTypes

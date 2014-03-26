@@ -1,9 +1,8 @@
 #! /usr/bin/env coffee
 
-eventTypeToTitle = {
-  issue: 'issue',
-  pull_request: 'pull request',
-}
+eventTypeToTitle = 
+  "issue": 'issue'
+  "pull_request": 'pull request'
 
 unique = (array) ->
   output = {}

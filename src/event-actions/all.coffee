@@ -46,7 +46,7 @@ module.exports =
     mentioned_line = ''
     if comment.body?
       mentioned_line = extractMentionsFromBody(comment.body)
-    callback "New comment on \"#{issue.title}\" by #{comment.user.login}: #{pr_or_issue.html_url}#{mentioned_line}"    
+    callback "New comment on \"#{issue.title}\" by #{comment.user.login}: #{issue.html_url}#{mentioned_line}"    
 
   page_build: (data, callback) ->
     build = data.build

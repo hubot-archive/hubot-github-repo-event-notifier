@@ -36,12 +36,27 @@ eventActions  = require('./event-actions/all')
 eventTypesRaw = process.env['HUBOT_GITHUB_EVENT_NOTIFIER_TYPES']
 eventTypes    = []
 
+regexGithubUser = /(?:I'm|I am) @?([a-z0-9]+) on GitHub/i
+regexNotGithubUser = /(?:I'm|I am) not on GitHub/i
+
 if eventTypesRaw?
   eventTypes = eventTypesRaw.split(',')
 else
   console.warn("github-repo-event-notifier is not setup to receive any events (HUBOT_GITHUB_EVENT_NOTIFIER_TYPES is empty).")
 
 module.exports = (robot) ->
+  robot.respond regexGithubUser, (msg) ->
+    match = regexGithubUser.exec msg.text
+    user = msg.user
+    if match
+      console.log "User @#{msg.user.mention_name} asked to link their GitHub account #{match[1]}"
+      (user.accounts ?= {})['github'] = match[1]
+      msg.reply "Ok, I'll remember you as #{match[1]} on GitHub."
+
+  robot.respond regexNotGithubUser, (msg) ->
+    delete (msg.user.accounts ?= {})['github']
+    msg.reply "Ok, you're not on GitHub."
+
   robot.router.post "/hubot/gh-repo-events", (req, res) ->
     query = querystring.parse(url.parse(req.url).query)
 
@@ -52,7 +67,7 @@ module.exports = (robot) ->
 
     try
       if eventType in eventTypes
-        announceRepoEvent data, eventType, (what) ->
+        announceRepoEvent robot, data, eventType, (what) ->
           robot.messageRoom room, what
       else
         console.log "Ignoring #{eventType} event as it's not allowed."
@@ -62,8 +77,8 @@ module.exports = (robot) ->
 
     res.end ""
 
-announceRepoEvent = (data, eventType, cb) ->
+announceRepoEvent = (robot, data, eventType, cb) ->
   if eventActions[eventType]?
-    eventActions[eventType](data, cb)
+    eventActions[eventType](robot, data, cb)
   else
     cb("Received a new #{eventType} event, just so you know.")

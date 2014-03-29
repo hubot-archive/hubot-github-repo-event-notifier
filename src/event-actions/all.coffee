@@ -1,6 +1,6 @@
 #! /usr/bin/env coffee
 
-eventTypeToTitle = 
+eventTypeToTitle =
   "issue": 'issue'
   "pull_request": 'pull request'
 
@@ -17,7 +17,7 @@ userByGitHub = (robot, nick) ->
     if accounts? and 'github' of accounts and accounts['github'].toLowerCase() is lowerNick
       result = robot.brain.users[k]
   result
-  
+
 
 extractMentionsFromBody = (robot, body) ->
   mentioned = body.match(/(^|\s)@([\w\-\/]+)/g)
@@ -27,7 +27,7 @@ extractMentionsFromBody = (robot, body) ->
       slashes = nick.match(/\//g)
       slashes is null or slashes.length < 2
 
-    mentioned = mentioned.map (nick) -> 
+    mentioned = mentioned.map (nick) ->
       nick = nick.trim()
       user = userByGitHub(robot, nick)
       if user?
@@ -72,4 +72,3 @@ module.exports =
         callback "#{build.pusher.login} built #{data.repository.full_name} pages at #{build.commit} in #{build.duration}ms."
       if build.error.message?
         callback "Page build for #{data.repository.full_name} errored: #{build.error.message}."
-

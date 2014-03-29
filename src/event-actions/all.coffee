@@ -29,7 +29,7 @@ buildNewIssueOrPRMessage = (data, eventType, callback) ->
     callback "New pull request \"#{pr_or_issue.title}\" by #{pr_or_issue.user.login}: #{pr_or_issue.html_url}#{mentioned_line}"
 
 module.exports =
-  issue: (data, callback) ->
+  issues: (data, callback) ->
     buildNewIssueOrPRMessage(data, 'issue', callback)
 
   pull_request: (data, callback) ->

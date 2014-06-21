@@ -49,9 +49,6 @@ module.exports =
   issues: (robot, data, callback) ->
     buildNewIssueOrPRMessage(robot, data, 'issue', callback)
 
-  pull_request: (robot, data, callback) ->
-    buildNewIssueOrPRMessage(robot, data, 'pull_request', callback)
-
   issue_comment: (robot, data, callback) ->
     issue = data['issue']
     comment = data['comment']
@@ -59,6 +56,40 @@ module.exports =
     if comment.body?
       mentioned_line = extractMentionsFromBody(robot, comment.body)
     callback "New comment on \"#{issue.title}\" by #{comment.user.login}: #{issue.html_url}#{mentioned_line}"
+
+  pull_request: (robot, data, callback) ->
+    buildNewIssueOrPRMessage(robot, data, 'pull_request', callback)
+
+  pull_request_review_comment: (robot, data, callback) ->
+    buildNewIssueOrPRMessage(data, 'pull_request_review_comment', callback)
+
+  push: (robot, data, callback) ->
+    if ! data.created
+      callback "#{data.commits.length} new commit(s) pushed by #{data.pusher.name}, see them here: #{data.compare}"
+
+  commit_comment: (robot, data, callback) ->
+    callback "#{data.comment.user.login} commented on a commit, see it here: #{data.comment.html_url}"
+
+  member: (robot, data, callback) ->
+    callback "#{data.member.login} has been #{data.action} as a contributor!"
+
+  watch: (robot, data, callback) ->
+    callback "#{data.watch.user.login} is now watching #{data.watch.repository.full_name}."
+
+  create: (robot, data, callback) ->
+    callback "The #{data.ref} #{data.ref_type} has been created."
+
+  delete: (robot, data, callback) ->
+    callback "The #{data.ref} #{data.ref_type} has been deleted."
+
+  fork: (robot, data, callback) ->
+    callback "A new fork of #{data.repository.full_name} has been created at #{data.forkee.full_name}."
+
+  team_add: (robot, data, callback) ->
+    callback "The #{data.team.name} team now has #{data.team.permission} access to #{data.repository.full_name}"
+
+  release: (robot, data, callback) ->
+    callback "#{data.release.name} has been #{data.action}! See it here: #{data.release.html_url}"
 
   page_build: (robot, data, callback) ->
     build = data.build

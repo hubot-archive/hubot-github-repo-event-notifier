@@ -36,7 +36,7 @@ module.exports =
     callback "#{data.issue.user.login} commented on an issue, see it here: #{data.comment.html_url}"
 
   pull_request: (data, callback) ->
-    callback "#{data.pull_request.user.login} submitted a pull request titled \"#{data.pull_request.title}\", see it here: #{data.pull_request.html_url}"
+    callback "#{data.pull_request.user.login} #{data.action} a pull request titled \"#{data.pull_request.title}\", see it here: #{data.pull_request.html_url}"
 
   pull_request_review_comment: (data, callback) ->
     callback "#{data.comment.user.login} commented on a pull request, see it here: #{data.comment.html_url}"

@@ -74,7 +74,7 @@ module.exports =
     callback "#{data.member.login} has been #{data.action} as a contributor!"
 
   watch: (robot, data, callback) ->
-    callback "#{data.watch.user.login} is now watching #{data.watch.repository.full_name}."
+    callback "#{data.sender.login} has #{data.action} watching #{data.repository.full_name}."
 
   create: (robot, data, callback) ->
     callback "The #{data.ref} #{data.ref_type} has been created."

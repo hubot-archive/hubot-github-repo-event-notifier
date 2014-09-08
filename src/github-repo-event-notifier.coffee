@@ -73,8 +73,6 @@ module.exports = (robot) ->
 
     try
       filter_parts = eventTypes.filter (e) ->
-        console.log "Received #{entry}" for entry in eventTypes
-
         # should always be at least two parts, from eventTypes creation above
         parts = e.split(":")
         event_part = parts[0]

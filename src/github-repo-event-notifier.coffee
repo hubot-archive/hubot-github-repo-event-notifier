@@ -41,7 +41,12 @@ regexGithubUser = /(?:I'm|I am) @?([a-z0-9]+) on GitHub/i
 regexNotGithubUser = /(?:I'm|I am) not on GitHub/i
 
 if eventTypesRaw?
-  eventTypes = eventTypesRaw.split(',')
+  # create a list like: "issues:* pull_request:comment pull_request:close fooevent:baraction"
+  # -- if any action is omitted, it will be appended with an asterisk (foo becomes foo:*) to
+  # indicate that any action on event foo is acceptable
+  eventTypes = eventTypesRaw.split(',').map(function (e) {
+    return (e.indexOf(":") > -1 ? e : e+":*") # append :* to any elements missing it
+    })
 else
   console.warn("github-repo-event-notifier is not setup to receive any events (HUBOT_GITHUB_EVENT_NOTIFIER_TYPES is empty).")
 
@@ -67,7 +72,36 @@ module.exports = (robot) ->
     console.log "Processing event type #{eventType}..."
 
     try
-      if eventType in eventTypes
+
+      filter_parts = eventTypes
+        .filter(function (e) {
+          # should always be at least two parts, from eventTypes creation above
+          parts = e.split(":")
+          event_part = parts[0]
+          action_part = parts[1]
+
+          if(event_part != eventType) {
+            return false # remove anything that isn't this event
+          }
+
+          if(action_part == "*") {
+            return true # wildcard on this event
+          }
+
+          if(!data.hasOwnProperty('action')) {
+            return true # no action property, let it pass
+          }
+
+          if(action_part == data.action) {
+            return true # action match
+          }
+
+          return false # no match, fail
+
+        })
+
+
+      if filter_parts.length > 0
         announceRepoEvent robot, data, eventType, (what) ->
           robot.messageRoom room, what
       else

@@ -39,11 +39,11 @@ extractMentionsFromBody = (robot, body) ->
 
 buildNewIssueOrPRMessage = (robot, data, eventType, callback) ->
   pr_or_issue = data[eventType]
-  if data.action == 'opened'
+  if data.action == 'opened' || data.action == 'closed' || data.action == 'reopened'
     mentioned_line = ''
     if pr_or_issue.body?
       mentioned_line = extractMentionsFromBody(robot, pr_or_issue.body)
-    callback "New #{eventType.replace('_', ' ')} \"#{pr_or_issue.title}\" by #{pr_or_issue.user.login}: #{pr_or_issue.html_url}#{mentioned_line}"
+    callback "#{data.action} #{eventType.replace('_', ' ')} \"#{pr_or_issue.title}\" by #{pr_or_issue.user.login}: #{pr_or_issue.html_url}#{mentioned_line}"
 
 module.exports =
   issues: (robot, data, callback) ->

@@ -79,23 +79,20 @@ module.exports = (robot) ->
           event_part = parts[0]
           action_part = parts[1]
 
-          if(event_part != eventType) {
-            return false # remove anything that isn't this event
-          }
+          # remove anything that isn't this event
+          return false if event_part != eventType
 
-          if(action_part == "*") {
-            return true # wildcard on this event
-          }
+          # wildcard on this event
+          return true if action_part == "*"
 
-          if(!data.hasOwnProperty('action')) {
-            return true # no action property, let it pass
-          }
+          # no action property, let it pass
+          return true if !data.hasOwnProperty('action')
 
-          if(action_part == data.action) {
-            return true # action match
-          }
+          # action match
+          return true if action_part == data.action
 
-          return false # no match, fail
+          # no match, fail
+          return false
 
 
       if filter_parts.length > 0

@@ -44,7 +44,7 @@ if eventTypesRaw?
   # create a list like: "issues:* pull_request:comment pull_request:close fooevent:baraction"
   # -- if any action is omitted, it will be appended with an asterisk (foo becomes foo:*) to
   # indicate that any action on event foo is acceptable
-  eventTypes = eventTypesRaw.split(',').map e -> (e.indexOf(":") > -1 ? e : e+":*") 
+  eventTypes = eventTypesRaw.split(',').map (e) -> (e.indexOf(":") > -1 ? e : e+":*")
 
 else
   console.warn("github-repo-event-notifier is not setup to receive any events (HUBOT_GITHUB_EVENT_NOTIFIER_TYPES is empty).")
@@ -73,7 +73,7 @@ module.exports = (robot) ->
     try
 
       filter_parts = eventTypes
-        .filter(function (e) {
+        .filter (e) ->
           # should always be at least two parts, from eventTypes creation above
           parts = e.split(":")
           event_part = parts[0]
@@ -96,8 +96,6 @@ module.exports = (robot) ->
           }
 
           return false # no match, fail
-
-        })
 
 
       if filter_parts.length > 0

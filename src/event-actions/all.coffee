@@ -66,7 +66,7 @@ module.exports =
   push: (robot, data, callback) ->
     if ! data.created
       commit_messages = data.commits.map((commit)-> commit.message).join("\n")
-      callback "#{data.commits.length} new commit(s) pushed by #{data.pusher.name}:\n#{commit_messages}See them here: #{data.compare}"
+      callback "#{data.commits.length} new commit(s) pushed by #{data.pusher.name}:\n#{commit_messages}\nSee them here: #{data.compare}"
 
   commit_comment: (robot, data, callback) ->
     callback "#{data.comment.user.login} commented on a commit, see it here: #{data.comment.html_url}"

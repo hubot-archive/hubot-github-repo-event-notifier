@@ -78,7 +78,9 @@ module.exports =
     callback "#{data.sender.login} has #{data.action} watching #{data.repository.full_name}."
 
   create: (robot, data, callback) ->
-    callback "The #{data.ref} #{data.ref_type} has been created."
+    out = "The #{data.ref} #{data.ref_type} has been created"
+    if data.repository && data.repository.name then out += " on #{data.repository.name}."
+    callback out
 
   delete: (robot, data, callback) ->
     callback "The #{data.ref} #{data.ref_type} has been deleted."

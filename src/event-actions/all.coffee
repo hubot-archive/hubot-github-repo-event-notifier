@@ -65,7 +65,8 @@ module.exports =
 
   push: (robot, data, callback) ->
     if ! data.created
-      callback "#{data.commits.length} new commit(s) pushed by #{data.pusher.name}, see them here: #{data.compare}"
+      commit_messages = data.commits.map((commit)-> commit.message).join("\n")
+      callback "#{data.commits.length} new commit(s) pushed by #{data.pusher.name}:\n#{commit_messages}\nSee them here: #{data.compare}"
 
   commit_comment: (robot, data, callback) ->
     callback "#{data.comment.user.login} commented on a commit, see it here: #{data.comment.html_url}"
@@ -77,7 +78,9 @@ module.exports =
     callback "#{data.sender.login} has #{data.action} watching #{data.repository.full_name}."
 
   create: (robot, data, callback) ->
-    callback "The #{data.ref} #{data.ref_type} has been created."
+    out = "The #{data.ref} #{data.ref_type} has been created"
+    if data.repository && data.repository.name then out += " on #{data.repository.name}."
+    callback out
 
   delete: (robot, data, callback) ->
     callback "The #{data.ref} #{data.ref_type} has been deleted."

@@ -29,6 +29,7 @@
 #   spajus
 #   patcon
 #   parkr
+#   pmgarman
 
 url           = require('url')
 querystring   = require('querystring')
@@ -36,12 +37,32 @@ eventActions  = require('./event-actions/all')
 eventTypesRaw = process.env['HUBOT_GITHUB_EVENT_NOTIFIER_TYPES']
 eventTypes    = []
 
+regexGithubUser = /(?:I'm|I am) @?([a-z0-9]+) on GitHub/i
+regexNotGithubUser = /(?:I'm|I am) not on GitHub/i
+
 if eventTypesRaw?
-  eventTypes = eventTypesRaw.split(',')
+  # create a list like: "issues:* pull_request:comment pull_request:close fooevent:baraction"
+  # -- if any action is omitted, it will be appended with an asterisk (foo becomes foo:*) to
+  # indicate that any action on event foo is acceptable
+  splitRawEvents = eventTypesRaw.split(',')
+  eventTypes = ((if e.indexOf(":") > -1 then e else e+":*") for e in splitRawEvents)
+  console.log "Registered event:action entry #{entry}" for entry in eventTypes
 else
   console.warn("github-repo-event-notifier is not setup to receive any events (HUBOT_GITHUB_EVENT_NOTIFIER_TYPES is empty).")
 
 module.exports = (robot) ->
+  robot.respond regexGithubUser, (msg) ->
+    match = regexGithubUser.exec msg.text
+    user = msg.user
+    if match
+      console.log "User @#{msg.user.mention_name} asked to link their GitHub account #{match[1]}"
+      (user.accounts ?= {})['github'] = match[1]
+      msg.reply "Ok, I'll remember you as #{match[1]} on GitHub."
+
+  robot.respond regexNotGithubUser, (msg) ->
+    delete (msg.user.accounts ?= {})['github']
+    msg.reply "Ok, you're not on GitHub."
+
   robot.router.post "/hubot/gh-repo-events", (req, res) ->
     query = querystring.parse(url.parse(req.url).query)
 
@@ -51,19 +72,41 @@ module.exports = (robot) ->
     console.log "Processing event type #{eventType}..."
 
     try
-      if eventType in eventTypes
-        announceRepoEvent data, eventType, (what) ->
+      filter_parts = eventTypes.filter (e) ->
+        # should always be at least two parts, from eventTypes creation above
+        parts = e.split(":")
+        event_part = parts[0]
+        action_part = parts[1]
+
+        # remove anything that isn't this event
+        return false if event_part != eventType
+
+        # wildcard on this event
+        return true if action_part == "*"
+
+        # no action property, let it pass
+        return true if !data.hasOwnProperty('action')
+
+        # action match
+        return true if action_part == data.action
+
+        # no match, fail
+        return false
+
+      if filter_parts.length > 0 # something matched
+        console.log "After filtering, #{entry} remained" for entry in filter_parts
+        announceRepoEvent robot, data, eventType, (what) ->
           robot.messageRoom room, what
       else
-        console.log "Ignoring #{eventType} event as it's not allowed."
+        console.log "Ignoring #{eventType} event as it's not allowed"
     catch error
       robot.messageRoom room, "Whoa, I got an error: #{error}"
       console.log "github repo event notifier error: #{error}. Request: #{req.body}"
 
     res.end ""
 
-announceRepoEvent = (data, eventType, cb) ->
+announceRepoEvent = (robot, data, eventType, cb) ->
   if eventActions[eventType]?
-    eventActions[eventType](data, cb)
+    eventActions[eventType](robot, data, cb)
   else
     cb("Received a new #{eventType} event, just so you know.")

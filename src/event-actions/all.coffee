@@ -34,6 +34,9 @@ module.exports =
 
   pull_request: (data, callback) ->
     buildNewIssueOrPRMessage(data, 'pull_request', callback)
+  
+  push: (data, callback) -> 
+    buildNewIssueOrPRMessage(data, 'push', callback)
 
   page_build: (data, callback) ->
     build = data.build

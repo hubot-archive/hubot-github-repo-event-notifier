@@ -28,6 +28,9 @@ buildNewIssueOrPRMessage = (data, eventType, callback) ->
       mentioned_line = extractMentionsFromBody(pr_or_issue.body)
     callback "New #{eventType.replace('_', ' ')} \"#{pr_or_issue.title}\" by #{pr_or_issue.user.login}: #{pr_or_issue.html_url}#{mentioned_line}"
 
+buildNewPushMessage = (data, callback) ->
+  callback "New push to \"#{data.repository.name}\" by #{data.pusher.name}: #{data.compare}"
+  
 module.exports =
   issues: (data, callback) ->
     buildNewIssueOrPRMessage(data, 'issue', callback)
@@ -36,7 +39,7 @@ module.exports =
     buildNewIssueOrPRMessage(data, 'pull_request', callback)
   
   push: (data, callback) -> 
-    buildNewIssueOrPRMessage(data, 'push', callback)
+    buildNewPushMessage(data, callback)
 
   page_build: (data, callback) ->
     build = data.build

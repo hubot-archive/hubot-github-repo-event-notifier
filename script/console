@@ -6,9 +6,10 @@ var context = repl.start("> ").context;
 
 // Configure what's available in the REPL
 context.eventPayloads = {
-  page_build:   require(process.cwd() + "/test/fixtures/page_build.json"),
   issues:       require(process.cwd() + "/test/fixtures/issues.json"),
+  page_build:   require(process.cwd() + "/test/fixtures/page_build.json"),
   pull_request: require(process.cwd() + "/test/fixtures/pull_request.json")
+  push:         require(process.cwd() + "/test/fixtures/push.json")
 };
 context.notifier = require(process.cwd() + "/src/github-repo-event-notifier.coffee");
 context.actions  = require(process.cwd() + "/src/event-actions/all.coffee");

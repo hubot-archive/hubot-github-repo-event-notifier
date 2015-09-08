@@ -23,7 +23,9 @@
 # Notes:
 #   Currently tested with the following event types in HUBOT_GITHUB_EVENT_NOTIFIER_TYPES:
 #     - issue
+#     - page_build
 #     - pull_request
+#     - push
 #
 # Authors:
 #   spajus

@@ -34,6 +34,9 @@ module.exports =
 
   pull_request: (data, callback) ->
     buildNewIssueOrPRMessage(data, 'pull_request', callback)
+  
+  push: (data, callback) -> 
+    callback "New push to \"#{data.repository.name}\" by #{data.pusher.name}: #{data.compare}"
 
   page_build: (data, callback) ->
     build = data.build

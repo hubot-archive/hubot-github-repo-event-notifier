@@ -25,6 +25,24 @@ Add **hubot-github-repo-event-notifier** to your `external-scripts.json`:
 
 Run `npm install`
 
+When starting hubot you need to specify the events it will accept. This is done via the `HUBOT_GITHUB_EVENT_NOTIFIER_TYPES`
+
+Ex:
+
+```
+HUBOT_GITHUB_EVENT_NOTIFIER_TYPES=pull_request,pull_request
+```
+
+If you want you can specific events in the event types.
+
+Ex:
+
+```
+HUBOT_GITHUB_EVENT_NOTIFIER_TYPES=pull_request:comment,pull_request:close
+```
+
+
+
 ## Development Testing
 
 Ideally, you'd write tests and put them in our `test/` directory.

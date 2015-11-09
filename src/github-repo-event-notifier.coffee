@@ -32,6 +32,7 @@
 #   patcon
 #   parkr
 
+inspect = (require('util')).inspect
 url = require('url')
 querystring = require('querystring')
 eventActions = require('./event-actions/all')
@@ -62,9 +63,10 @@ module.exports = (robot) ->
     query = querystring.parse(url.parse(req.url).query)
 
     data = req.body
+    robot.logger.debug "github-repo-event-notifier: Received POST to /hubot/gh-repo-events with data = #{inspect data}"
     room = query.room || process.env["HUBOT_GITHUB_EVENT_NOTIFIER_ROOM"]
     eventType = req.headers["x-github-event"]
-    console.log "Processing event type #{eventType}..."
+    robot.logger.debug "github-repo-event-notifier: Processing event type: \"#{eventType}\"..."
 
     try
 

@@ -27,15 +27,14 @@ module.exports =
     comment = data.comment
     repo = data.repository
 
-    callback "New comment by #{comment.user.login}
-    on Commit #{comment.commit_id}: #{comment.body} - #{comment.html_url}"
+    callback "[<#{repo.html_url}|#{repo.name}>] New comment by #{comment.user.login} on commit <#{comment.html_url}|#{comment.commit_id}>: \n\"#{comment.body}\""
 
   create: (data, callback) ->
     repo = data.repository
     ref_type = data.ref_type
     ref = data.ref
 
-    callback "New #{ref_type} #{ref} created on #{repo.full_name}"
+    callback "[<#{repo.html_url}|#{repo.name}>] New #{ref_type} #{ref} created"
 
   delete: (data, callback) ->
     repo = data.repository
@@ -43,7 +42,7 @@ module.exports =
 
     ref = data.ref.split('refs/heads/').join('')
 
-    callback "#{ref_type} #{ref} deleted on #{repo.full_name}"
+    callback "[<#{repo.html_url}|#{repo.name}>] #{ref_type} #{ref} deleted"
 
   deployment: (data, callback) ->
     deploy = data.deployment
@@ -62,7 +61,7 @@ module.exports =
     forkee = data.forkee
     repo = data.repository
 
-    callback "#{repo.full_name} forked by #{forkee.owner.login}"
+    callback "<#{repo.html_url}|#{repo.name}> forked by #{forkee.owner.login}"
 
   # Needs to handle more then just one page
   gollum: (data, callback) ->
@@ -72,7 +71,7 @@ module.exports =
 
     page = pages[0]
 
-    callback "Wiki page: #{page.page_name} #{page.action} on #{repo.full_name} by #{sender.login}"
+    callback "[<#{repo.html_url}|#{repo.name}>] Wiki page: #{page.page_name} #{page.action} by #{sender.login}"
 
   issues: (data, callback) ->
     issue = data.issue
@@ -80,7 +79,7 @@ module.exports =
     action = data.action
     sender = data.sender
 
-    msg = "Issue \##{issue.number} \"#{issue.title}\""
+    msg = "[<#{repo.html_url}|#{repo.name}>] Issue <#{issue.html_url}|\##{issue.number} \"#{issue.title}\">"
 
     switch action
       when "assigned"
@@ -98,7 +97,7 @@ module.exports =
       when "unlabeled"
         msg += " #{sender.login} removed label: \"#{data.label.name}\" "
 
-    callback msg + "- #{issue.html_url}"
+    callback msg
 
   issue_comment: (data, callback) ->
     issue = data.issue
@@ -110,7 +109,7 @@ module.exports =
     if comment.html_url.indexOf("/pull/") > -1
       issue_pull = "Pull Request"
 
-    callback "New Comment on #{issue_pull} \##{issue.number} by #{comment.user.login}: \"#{comment.body}\" - #{comment.html_url}"
+    callback "[<#{repo.html_url}|#{repo.name}>] New comment on <#{comment.html_url}|#{issue_pull} \##{issue.number}> by #{comment.user.login}: \n\"#{comment.body}\""
 
   member: (data, callback) ->
     member = data.member
@@ -142,7 +141,7 @@ module.exports =
     base = data.base
     repo = data.repository
 
-    callback "New Comment on Pull Request \"#{comment.body}\" by #{comment.user.login}: #{comment.html_url}"
+    callback "[<#{repo.html_url}|#{repo.name}>] New comment on PR <#{comment.html_url}|#{pull_req.title}> by #{comment.user.login}: \n\"#{comment.body}\""
 
   pull_request: (data, callback) ->
     pull_num = data.number
@@ -153,7 +152,7 @@ module.exports =
 
     action = data.action
 
-    msg = "Pull Request \##{data.number} \"#{pull_req.title}\" "
+    msg = "[<#{repo.html_url}|#{repo.name}>] Pull Request <#{pull_req.html_url}|\##{data.number} \"#{pull_req.title}\">"
 
     switch action
       when "assigned"
@@ -176,7 +175,7 @@ module.exports =
       when "synchronize"
         msg +=" synchronized by #{sender.login} "
 
-    callback msg + "- #{pull_req.html_url}"
+    callback msg
 
   push: (data, callback) ->
     commit = data.after
@@ -186,7 +185,13 @@ module.exports =
     pusher = data.pusher
 
     if !data.deleted
-      callback "New Commit \"#{head_commit.message}\" to #{repo.full_name} by #{pusher.name}: #{head_commit.url}"
+      if commits.length == 1
+        callback "[<#{repo.html_url}|#{repo.name}>] New commit <#{head_commit.url}|\"#{head_commit.message}\"> by #{pusher.name}"
+      else if commits.length > 1
+        message = "[<#{repo.html_url}|#{repo.name}>] #{pusher.name} pushed #{commits.length} commits:"
+        for commit in commits
+          message += "\n<#{commit.url}|\"#{commit.message}\">"
+        callback message
 
   # Org level event
   repository: (data, callback) ->
@@ -201,7 +206,7 @@ module.exports =
     repo = data.repository
     action = data.action
 
-    callback "Release #{release.tag_name} #{action} on #{repo.full_name}"
+    callback "[<#{repo.html_url}|#{repo.name}>] Release #{release.tag_name} #{action}"
 
   # No clue what to do with this one.
   status: (data, callback) ->

@@ -1,3 +1,8 @@
+## v1.7.0
+
+* Reformat messages a bit for readability & strategically linkify
+  [[GH-34]](https://github.com/hubot-scripts/hubot-github-repo-event-notifier/pull/34)
+
 ## v1.5.0
 
 * Added a bunch of new eventTypes.

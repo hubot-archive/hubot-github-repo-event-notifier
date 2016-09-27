@@ -1,7 +1,7 @@
 {
   "name": "hubot-github-repo-event-notifier",
   "description": "Notifies about any available GitHub repo event via webhook",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "author": "patcon@gittip",
   "contributors": [
     "geekgonecrazy",

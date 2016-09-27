@@ -30,7 +30,7 @@ formatUrl = (adapter, url, text) ->
       url
 
 module.exports =
-  commit_comment: (data, callback, adapter) ->
+  commit_comment: (adapter, data, callback) ->
     comment = data.comment
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
@@ -38,7 +38,7 @@ module.exports =
 
     callback "[#{repo_link}] New comment by #{comment.user.login} on commit #{commit_link}: \n\"#{comment.body}\""
 
-  create: (data, callback, adapter) ->
+  create: (adapter, data, callback) ->
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
     ref_type = data.ref_type
@@ -46,7 +46,7 @@ module.exports =
 
     callback "[#{repo_link}] New #{ref_type} #{ref} created"
 
-  delete: (data, callback, adapter) ->
+  delete: (adapter, data, callback) ->
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
     ref_type = data.ref_type
@@ -55,20 +55,20 @@ module.exports =
 
     callback "[#{repo_link}] #{ref_type} #{ref} deleted"
 
-  deployment: (data, callback, adapter) ->
+  deployment: (adapter, data, callback) ->
     deploy = data.deployment
     repo = data.repository
 
     callback "New deployment #{deploy.id} from: #{repo.full_name} to: #{deploy.environment} started by: #{deploy.creator.login}"
 
-  deployment_status: (data, callback, adapter) ->
+  deployment_status: (adapter, data, callback) ->
     deploy = data.deployment
     deploy_status = data.deployment_status
     repo = data.repository
 
     callback "Deployment #{deploy.id} from: #{repo.full_name} to: #{deploy.environment} - #{deploy_status.state} by #{deploy.status.creator.login}"
 
-  fork: (data, callback, adapter) ->
+  fork: (adapter, data, callback) ->
     forkee = data.forkee
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
@@ -76,7 +76,7 @@ module.exports =
     callback "#{repo_link} forked by #{forkee.owner.login}"
 
   # Needs to handle more then just one page
-  gollum: (data, callback, adapter) ->
+  gollum: (adapter, data, callback) ->
     pages = data.pages
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
@@ -86,11 +86,11 @@ module.exports =
 
     callback "[#{repo_link}] Wiki page: #{page.page_name} #{page.action} by #{sender.login}"
 
-  issues: (data, callback, adapter) ->
+  issues: (adapter, data, callback) ->
     issue = data.issue
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
-    issue_link = formatUrl adapter, issue.html_url, "\##{issue.number} \"#{issue.title}\""
+    issue_link = formatUrl adapter, issue.html_url, "##{issue.number} \"#{issue.title}\""
     action = data.action
     sender = data.sender
 
@@ -114,12 +114,12 @@ module.exports =
 
     callback msg
 
-  issue_comment: (data, callback, adapter) ->
+  issue_comment: (adapter, data, callback) ->
     issue = data.issue
     comment = data.comment
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
-    comment_link = formatUrl adapter, comment.html_url, "#{issue_pull} \##{issue.number}"
+    comment_link = formatUrl adapter, comment.html_url, "#{issue_pull} ##{issue.number}"
 
     issue_pull = "Issue"
 
@@ -128,14 +128,14 @@ module.exports =
 
     callback "[#{repo_link}] New comment on #{comment_link} by #{comment.user.login}: \n\"#{comment.body}\""
 
-  member: (data, callback, adapter) ->
+  member: (adapter, data, callback) ->
     member = data.member
     repo = data.repository
 
     callback "Member #{member.login} #{data.action} from #{repo.full_name}"
 
   # Org level event
-  membership: (data, callback, adapter) ->
+  membership: (adapter, data, callback) ->
     scope = data.scope
     member = data.member
     team = data.team
@@ -143,7 +143,7 @@ module.exports =
 
     callback "#{org.login} #{data.action} #{member.login} to #{scope} #{team.name}"
 
-  page_build: (data, callback, adapter) ->
+  page_build: (adapter, data, callback) ->
     build = data.build
     repo = data.repository
     if build?
@@ -152,7 +152,7 @@ module.exports =
       if build.error.message?
         callback "Page build for #{data.repository.full_name} errored: #{build.error.message}."
 
-  pull_request_review_comment: (data, callback, adapter) ->
+  pull_request_review_comment: (adapter, data, callback) ->
     comment = data.comment
     pull_req = data.pull_request
     base = data.base
@@ -162,13 +162,13 @@ module.exports =
 
     callback "[#{repo_link}] New comment on Pull Request #{comment_link} by #{comment.user.login}: \n\"#{comment.body}\""
 
-  pull_request: (data, callback, adapter) ->
+  pull_request: (adapter, data, callback) ->
     pull_num = data.number
     pull_req = data.pull_request
     base = data.base
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
-    pull_request_link = formatUrl adapter, pull_req.html_url, "\##{data.number} \"#{pull_req.title}\""
+    pull_request_link = formatUrl adapter, pull_req.html_url, "##{data.number} \"#{pull_req.title}\""
     sender = data.sender
 
     action = data.action
@@ -198,7 +198,7 @@ module.exports =
 
     callback msg
 
-  push: (data, callback, adapter) ->
+  push: (adapter, data, callback) ->
     commit = data.after
     commits = data.commits
     head_commit = data.head_commit
@@ -218,14 +218,14 @@ module.exports =
         callback message
 
   # Org level event
-  repository: (data, callback, adapter) ->
+  repository: (adapter, data, callback) ->
     repo = data.repository
     org = data.organization
     action = data.action
 
     callback "#{repo.full_name} #{action}"
 
-  release: (data, callback, adapter) ->
+  release: (adapter, data, callback) ->
     release = data.release
     repo = data.repository
     repo_link = formatUrl adapter, repo.html_url, repo.name
@@ -234,7 +234,7 @@ module.exports =
     callback "[#{repo_link}] Release #{release.tag_name} #{action}"
 
   # No clue what to do with this one.
-  status: (data, callback, adapter) ->
+  status: (adapter, data, callback) ->
     commit = data.commit
     state = data.state
     branches = data.branches
@@ -242,7 +242,7 @@ module.exports =
 
     callback ""
 
-  watch: (data, callback, adapter) ->
+  watch: (adapter, data, callback) ->
     repo = data.repository
     sender = data.sender
 

@@ -105,6 +105,6 @@ module.exports = (robot) ->
 
 announceRepoEvent = (adapter, data, eventType, cb) ->
   if eventActions[eventType]?
-    eventActions[eventType](data, cb, adapter)
+    eventActions[eventType](adapter, data, cb)
   else
     cb("Received a new #{eventType} event, just so you know.")

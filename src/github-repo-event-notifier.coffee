@@ -36,27 +36,29 @@ inspect = (require('util')).inspect
 url = require('url')
 querystring = require('querystring')
 eventActions = require('./event-actions/all')
-eventTypesRaw = process.env['HUBOT_GITHUB_EVENT_NOTIFIER_TYPES']
+supportedEvents = ['commit_comment', 'create', 'delete', 'deployment', 'deployment_status', 'fork', 'gollum', 'issues', 'issue_comment', 'member', 'membership', 'page_build', 'pull_request_review_comment', 'pull_request', 'push', 'repository', 'release', 'status', 'watch']
+eventTypesRaw = process.env['HUBOT_GITHUB_EVENT_NOTIFIER_TYPES'] or= '*'
 eventTypes = []
 
-if eventTypesRaw?
-  ###
-  create a list like: "issues:* pull_request:comment pull_request:close fooevent:baraction"
+if eventTypesRaw == '*'
+  eventTypesRaw = supportedEvents.join(',')
+  console.warn("github-repo-event-notifier is configured to handle all types of events, (define HUBOT_GITHUB_EVENT_NOTIFIER_TYPES env variable to filter them).")
 
-  If any action is omitted, it will be appended with an asterisk (foo becomes foo:*) to
-  indicate that any action on event foo is acceptable
-  ###
+###
+create a list like: "issues:* pull_request:comment pull_request:close fooevent:baraction"
 
-  eventTypes = eventTypesRaw.split(',').map (e) ->
-    append = ""
+If any action is omitted, it will be appended with an asterisk (foo becomes foo:*) to
+indicate that any action on event foo is acceptable
+###
 
-    # append :* to any elements missing it
-    if e.indexOf(":") == -1
-      append = ":*"
+eventTypes = eventTypesRaw.split(',').map (e) ->
+  append = ""
 
-    return "#{e}#{append}"
-else
-  console.warn("github-repo-event-notifier is not setup to receive any events (HUBOT_GITHUB_EVENT_NOTIFIER_TYPES is empty).")
+  # append :* to any elements missing it
+  if e.indexOf(":") == -1
+    append = ":*"
+
+  return "#{e}#{append}"
 
 module.exports = (robot) ->
   robot.router.post "/hubot/gh-repo-events", (req, res) ->

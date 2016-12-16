@@ -97,8 +97,8 @@ module.exports = (robot) ->
           return false # no match, fail
 
       if filter_parts.length > 0
-        announceRepoEvent adapter, data, eventType, (what) ->
-          robot.messageRoom room, what
+        announceRepoEvent adapter, data, eventType, (what, customRoom) ->
+          robot.messageRoom customRoom || room, what
       else
         console.log "Ignoring #{eventType}:#{data.action} as it's not allowed."
     catch error

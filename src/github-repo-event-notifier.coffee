@@ -33,12 +33,16 @@
 #   patcon
 #   parkr
 
+_ = require('lodash')
 inspect = (require('util')).inspect
 url = require('url')
 querystring = require('querystring')
-eventActions = require('./event-actions/all')
 eventTypesRaw = process.env['HUBOT_GITHUB_EVENT_NOTIFIER_TYPES']
 eventTypes = []
+customActions = {}
+try
+  customActions = require.main.require('../../../scripts/github/custom-actions')
+eventActions = _.assign(require('./event-actions/all'), customActions)
 
 if eventTypesRaw?
   ###

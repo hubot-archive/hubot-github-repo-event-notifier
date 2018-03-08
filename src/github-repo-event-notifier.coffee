@@ -33,12 +33,16 @@
 #   patcon
 #   parkr
 
+_ = require('lodash')
 inspect = (require('util')).inspect
 url = require('url')
 querystring = require('querystring')
-eventActions = require('./event-actions/all')
 eventTypesRaw = process.env['HUBOT_GITHUB_EVENT_NOTIFIER_TYPES']
 eventTypes = []
+customActions = {}
+try
+  customActions = require.main.require('../../../scripts/github/custom-actions')
+eventActions = _.assign(require('./event-actions/all'), customActions)
 
 if eventTypesRaw?
   ###
@@ -94,8 +98,8 @@ module.exports = (robot) ->
           return false # no match, fail
 
       if filter_parts.length > 0
-        announceRepoEvent adapter, data, eventType, (what) ->
-          robot.messageRoom room, what
+        announceRepoEvent adapter, data, eventType, (what, customRoom) ->
+          robot.messageRoom customRoom || room, what
       else
         console.log "Ignoring #{eventType}:#{data.action} as it's not allowed."
     catch error

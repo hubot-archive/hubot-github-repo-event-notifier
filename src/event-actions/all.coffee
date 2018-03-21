@@ -98,7 +98,10 @@ module.exports =
 
     switch action
       when "assigned"
-        msg += " assigned to: #{issue.assignee.login} by #{sender.login} "
+        if issue.assignee.login is sender.login
+          msg += " self-assigned by #{issue.assignee.login} "
+        else
+          msg += " assigned to: #{issue.assignee.login} by #{sender.login} "
       when "unassigned"
         msg += " unassigned #{data.assignee.login} by #{sender.login} "
       when "opened"

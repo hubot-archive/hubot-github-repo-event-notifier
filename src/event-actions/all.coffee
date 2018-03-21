@@ -84,7 +84,7 @@ module.exports =
 
     page = pages[0]
 
-    callback "[#{repo_link}] Wiki page: #{page.page_name} #{page.action} by #{sender.login}"
+    callback "[#{repo_link}] Wiki page #{page.page_name} (#{page.html_url}) #{page.action} by #{sender.login}"
 
   issues: (adapter, data, callback) ->
     issue = data.issue

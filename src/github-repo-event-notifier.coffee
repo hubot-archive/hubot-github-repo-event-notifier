@@ -57,7 +57,7 @@ if eventTypesRaw?
 
     return "#{e}#{append}"
 else
-  console.warn("github-repo-event-notifier is not setup to receive any events (HUBOT_GITHUB_EVENT_NOTIFIER_TYPES is empty).")
+  robot.logger.warning("github-repo-event-notifier is not setup to receive any events (HUBOT_GITHUB_EVENT_NOTIFIER_TYPES is empty).")
 
 module.exports = (robot) ->
   robot.router.post "/hubot/gh-repo-events", (req, res) ->
@@ -97,10 +97,10 @@ module.exports = (robot) ->
         announceRepoEvent adapter, data, eventType, (what) ->
           robot.messageRoom room, what
       else
-        console.log "Ignoring #{eventType}:#{data.action} as it's not allowed."
+        robot.logger.info "Ignoring #{eventType}:#{data.action} as it's not allowed."
     catch error
       robot.messageRoom room, "Whoa, I got an error: #{error}"
-      console.log "Github repo event notifier error: #{error}. Request: #{req.body}"
+      robot.logger.error "Github repo event notifier error: #{error}. Request: #{req.body}"
 
     res.end ""
 

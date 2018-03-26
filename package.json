@@ -31,14 +31,15 @@
     "querystring": "~0.2.0"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*",
-    "sinon-chai": "*",
-    "sinon": "*",
+    "chai": "^4.1.2",
+    "grunt": "^1.0.2",
+    "grunt-contrib-watch": "~0.5.3",
     "grunt-mocha-test": "~0.7.0",
     "grunt-release": "~0.6.0",
     "matchdep": "~0.1.2",
-    "grunt-contrib-watch": "~0.5.3"
+    "mocha": "^5.0.5",
+    "sinon": "^4.4.8",
+    "sinon-chai": "^3.0.0"
   },
   "main": "index.coffee",
   "scripts": {

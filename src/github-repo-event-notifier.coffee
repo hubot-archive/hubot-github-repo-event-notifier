@@ -32,6 +32,7 @@
 #   spajus
 #   patcon
 #   parkr
+#   strugee
 
 inspect = (require('util')).inspect
 url = require('url')

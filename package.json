@@ -26,9 +26,7 @@
     "url": "https://github.com/patcon/hubot-github-repo-event-notifier/issues"
   },
   "dependencies": {
-    "coffee-script": "1.12.7",
-    "querystring": "^0.2.0",
-    "url": "^0.7.9"
+    "coffee-script": "1.12.7"
   },
   "devDependencies": {
     "chai": "^4.1.2",

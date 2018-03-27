@@ -1,6 +1,6 @@
 ## v1.8.1
 
-* Fix `ReferenceError: robot is not defined` crash
+* Fix `ReferenceError: robot is not defined` crash by reverting to 1.7.0 behavior
   [[GH-48]](https://github.com/hubot-scripts/hubot-github-repo-event-notifier/issues/48)
 
 ## v1.8.0
